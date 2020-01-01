@@ -32,3 +32,6 @@ target/
 
 # Gradle specific files
 .gradle/
+
+# Property file
+config.properties
