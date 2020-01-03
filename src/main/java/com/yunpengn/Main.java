@@ -25,7 +25,7 @@ public class Main {
   // The query used to check the difference of the results of two queries.
   private static final String META_QUERY = "((%s) EXCEPT (%s)) UNION ALL ((%s) EXCEPT (%s));";
   // The query used to wrap the input.
-  private static final String WRAP_QUERY = "SELECT \"%s\" from (%s)";
+  private static final String WRAP_QUERY = "SELECT \"%s\" from (%s) AS \"z\"";
 
   // The field names to look for in the queries.
   private static final List<String> FIELD_NAMES = Arrays.asList(
