@@ -9,9 +9,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -56,11 +57,11 @@ public class Main {
     Connection connection = createConnection();
 
     // Reads the input and compares each pair of queries.
-    List<Pair> pairs = readInput(inputFile);
-    for (Pair pair: pairs) {
+    Map<Pair, String> pairs = readInput(inputFile);
+    for (Map.Entry<Pair, String> entry: pairs.entrySet()) {
       // Wraps the query to guarantee select ordering.
-      String queryA = wrapQuery(pair.first);
-      String queryB = wrapQuery(pair.second);
+      String queryA = wrapQuery(entry.getKey().first);
+      String queryB = wrapQuery(entry.getKey().second);
 
       boolean isSame = true;
       try {
@@ -73,6 +74,8 @@ public class Main {
         System.err.println(INTERNAL_DELIMITER);
         System.err.println("Second query: ");
         System.err.println(queryB);
+        System.err.println(INTERNAL_DELIMITER);
+        System.err.println(entry.getValue());
         System.err.println(PAIR_DELIMITER);
       }
 
@@ -85,6 +88,8 @@ public class Main {
         System.out.println(INTERNAL_DELIMITER);
         System.out.println("Second query: ");
         System.out.println(queryB);
+        System.out.println(INTERNAL_DELIMITER);
+        System.out.println(entry.getValue());
         System.out.println(PAIR_DELIMITER);
       }
     }
@@ -153,17 +158,18 @@ public class Main {
    * @return all pairs of queries in that file.
    * @throws IOException when there is any I/O error.
    */
-  private static List<Pair> readInput(String fileName) throws IOException {
+  private static Map<Pair, String> readInput(String fileName) throws IOException {
     // Creates the reader.
     FileReader fileReader = new FileReader(fileName);
     BufferedReader reader = new BufferedReader(fileReader);
 
     // Reads line by line.
-    List<Pair> result = new ArrayList<>();
+    Map<Pair, String> result = new HashMap<>();
     while (PAIR_DELIMITER.equals(reader.readLine())) {
       String first = readUntil(reader, INTERNAL_DELIMITER);
-      String second = readUntil(reader, PAIR_DELIMITER);
-      result.add(new Pair(first, second));
+      String second = readUntil(reader, INTERNAL_DELIMITER);
+      String description = readUntil(reader, PAIR_DELIMITER);
+      result.put(new Pair(first, second), description);
     }
 
     // Closes the reader and returns the result.
