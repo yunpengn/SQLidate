@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,22 @@ public class Main {
     // Reads the input and compares each pair of queries.
     List<Pair> pairs = readInput(inputFile);
     for (Pair pair: pairs) {
-      if (!compareQueryResult(connection, pair.first, pair.second)) {
+      boolean isSame = true;
+      try {
+        isSame = compareQueryResult(connection, pair.first, pair.second);
+      } catch (SQLException e) {
+        System.err.println(PAIR_DELIMITER);
+        System.err.printf("Meet exception %s when comparing the following 2 queries: \n", e);
+        System.err.println("First query: ");
+        System.err.println(pair.first);
+        System.err.println(INTERNAL_DELIMITER);
+        System.err.println("Second query: ");
+        System.err.println(pair.second);
+        System.err.println(PAIR_DELIMITER);
+      }
+
+      // Prints the output if not the same.
+      if (!isSame) {
         System.err.println(PAIR_DELIMITER);
         System.err.println("The following 2 queries are not equivalent:\n");
         System.err.println("First query: ");
@@ -88,9 +104,9 @@ public class Main {
    * @param queryA is the first query.
    * @param queryB is the second query.
    * @return true if their results are the same.
-   * @throws Exception when there is any I/O error or database error.
+   * @throws SQLException when there is any database error.
    */
-  private static boolean compareQueryResult(Connection connection, String queryA, String queryB) throws Exception {
+  private static boolean compareQueryResult(Connection connection, String queryA, String queryB) throws SQLException {
     // Constructs the meta query.
     String query = String.format(META_QUERY, queryA, queryB, queryB, queryA);
 
