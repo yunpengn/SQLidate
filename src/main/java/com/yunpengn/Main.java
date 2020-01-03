@@ -62,11 +62,13 @@ public class Main {
       case "true":
       case "t":
         wrapInput = true;
+        break;
       case "n":
       case "no":
       case "false":
       case "f":
         wrapInput = false;
+        break;
       default:
         System.err.println("Usage: java -jar XXX.jar <input_file_path> [Y/N]");
         return;
