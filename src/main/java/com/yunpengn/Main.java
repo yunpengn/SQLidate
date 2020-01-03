@@ -10,8 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * The main driver class.
@@ -22,6 +24,13 @@ public class Main {
 
   // The query used to check the difference of the results of two queries.
   private static final String META_QUERY = "((%s) EXCEPT (%s)) UNION ALL ((%s) EXCEPT (%s));";
+  // The query used to wrap the input.
+  private static final String WRAP_QUERY = "SELECT \"%s\" from (%s)";
+
+  // The field names to look for in the queries.
+  private static final List<String> FIELD_NAMES = Arrays.asList(
+      "aID", "bID", "cID", "dID", "eID", "fID", "gID", "hID", "iID", "jID", "kID", "lID"
+  );
 
   // The default delimiter used in result output.
   private static final String PAIR_DELIMITER
@@ -49,17 +58,21 @@ public class Main {
     // Reads the input and compares each pair of queries.
     List<Pair> pairs = readInput(inputFile);
     for (Pair pair: pairs) {
+      // Wraps the query to guarantee select ordering.
+      String queryA = wrapQuery(pair.first);
+      String queryB = wrapQuery(pair.second);
+
       boolean isSame = true;
       try {
-        isSame = compareQueryResult(connection, pair.first, pair.second);
+        isSame = compareQueryResult(connection, queryA, queryB);
       } catch (SQLException e) {
         System.err.println(PAIR_DELIMITER);
         System.err.printf("Meet exception %s when comparing the following 2 queries: \n", e);
         System.err.println("First query: ");
-        System.err.println(pair.first);
+        System.err.println(queryA);
         System.err.println(INTERNAL_DELIMITER);
         System.err.println("Second query: ");
-        System.err.println(pair.second);
+        System.err.println(queryB);
         System.err.println(PAIR_DELIMITER);
       }
 
@@ -68,10 +81,10 @@ public class Main {
         System.err.println(PAIR_DELIMITER);
         System.err.println("The following 2 queries are not equivalent:\n");
         System.err.println("First query: ");
-        System.err.println(pair.first);
+        System.err.println(queryA);
         System.err.println(INTERNAL_DELIMITER);
         System.err.println("Second query: ");
-        System.err.println(pair.second);
+        System.err.println(queryB);
         System.err.println(PAIR_DELIMITER);
       }
     }
@@ -118,6 +131,19 @@ public class Main {
 
     // Checks whether the result is empty.
     return isEmpty;
+  }
+
+  /**
+   * Wraps an input query to guarantee the ordering in its SELECT clause.
+   *
+   * @param input is the input query.
+   * @return the wrapped query.
+   */
+  private static String wrapQuery(String input) {
+    String availableFields = FIELD_NAMES.stream()
+        .filter(field -> input.contains(field) || input.contains("\"" + field.substring(0, 1) + "\""))
+        .collect(Collectors.joining("\", \""));
+    return String.format(WRAP_QUERY, availableFields, input);
   }
 
   /**
