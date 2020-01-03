@@ -78,14 +78,14 @@ public class Main {
 
       // Prints the output if not the same.
       if (!isSame) {
-        System.err.println(PAIR_DELIMITER);
-        System.err.println("The following 2 queries are not equivalent:\n");
-        System.err.println("First query: ");
-        System.err.println(queryA);
-        System.err.println(INTERNAL_DELIMITER);
-        System.err.println("Second query: ");
-        System.err.println(queryB);
-        System.err.println(PAIR_DELIMITER);
+        System.out.println(PAIR_DELIMITER);
+        System.out.println("The following 2 queries are not equivalent:\n");
+        System.out.println("First query: ");
+        System.out.println(queryA);
+        System.out.println(INTERNAL_DELIMITER);
+        System.out.println("Second query: ");
+        System.out.println(queryB);
+        System.out.println(PAIR_DELIMITER);
       }
     }
 
