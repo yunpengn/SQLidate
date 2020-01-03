@@ -53,6 +53,26 @@ public class Main {
     }
     String inputFile = args[0];
 
+    // Whether to enable query wrapper.
+    boolean wrapInput = true;
+    if (args.length > 1) {
+      switch (args[1].toLowerCase()) {
+      case "y":
+      case "yes":
+      case "true":
+      case "t":
+        wrapInput = true;
+      case "n":
+      case "no":
+      case "false":
+      case "f":
+        wrapInput = false;
+      default:
+        System.err.println("Usage: java -jar XXX.jar <input_file_path> [Y/N]");
+        return;
+      }
+    }
+
     // Creates the database connection.
     Connection connection = createConnection();
 
@@ -60,8 +80,14 @@ public class Main {
     Map<Pair, String> pairs = readInput(inputFile);
     for (Map.Entry<Pair, String> entry: pairs.entrySet()) {
       // Wraps the query to guarantee select ordering.
-      String queryA = wrapQuery(entry.getKey().first);
-      String queryB = wrapQuery(entry.getKey().second);
+      String queryA = entry.getKey().first;
+      if (wrapInput) {
+        queryA = wrapQuery(queryA);
+      }
+      String queryB = entry.getKey().second;
+      if (wrapInput) {
+        queryB = wrapQuery(queryB);
+      }
 
       boolean isSame = true;
       try {
