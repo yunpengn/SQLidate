@@ -19,8 +19,8 @@ public class Main {
   // The name for configuration file.
   private static final String PROPERTY_FILE_NAME = "config.properties";
 
-  // The number of columns that is supposed to be in the result set.
-  private static int NUM_COLUMNS = 5;
+  // The query used to check the difference of the results of two queries.
+  private static final String META_QUERY = "((%s) EXCEPT (%s)) UNION ALL ((%s) EXCEPT (%s));";
 
   // The default delimiter used in result output.
   private static final String PAIR_DELIMITER
@@ -29,10 +29,16 @@ public class Main {
       = "-------------------------------------------------------------";
   private static final String LINE_DELIMITER = "\n";
 
+  /**
+   * The main function.
+   *
+   * @param args are the CLI arguments.
+   */
   public static void main(String[] args) throws Exception {
     // Input validation.
     if (args.length == 0) {
-      System.out.println("Usage: java -jar XXX.jar <input_file_path>");
+      System.err.println("Usage: java -jar XXX.jar <input_file_path>");
+      return;
     }
     String inputFile = args[0];
 
@@ -69,53 +75,42 @@ public class Main {
     final Properties props = new Properties();
     props.load(new FileInputStream(PROPERTY_FILE_NAME));
 
-    // Updates the number of columns.
-    String numColumns = props.getProperty("columns");
-    if (numColumns != null) {
-      NUM_COLUMNS = Integer.parseInt(numColumns);
-    }
-
     // Creates the database connection.
     String dbName = props.getProperty("db");
     String url = "jdbc:postgresql://localhost/" + dbName;
     return DriverManager.getConnection(url, props);
   }
 
+  /**
+   * Checks whether the {@link ResultSet} of two queries are the same.
+   *
+   * @param connection is the database connection.
+   * @param queryA is the first query.
+   * @param queryB is the second query.
+   * @return true if their results are the same.
+   * @throws Exception when there is any I/O error or database error.
+   */
   private static boolean compareQueryResult(Connection connection, String queryA, String queryB) throws Exception {
-    // Executes the first query.
-    Statement statementA = connection.createStatement();
-    ResultSet resultA = statementA.executeQuery(queryA);
+    // Constructs the meta query.
+    String query = String.format(META_QUERY, queryA, queryB, queryB, queryA);
 
-    // Retrieves the rows in first result.
-    List<List<Integer>> resultSetA = new ArrayList<>();
-    while (resultA.next()) {
-      List<Integer> row = new ArrayList<>(NUM_COLUMNS);
-      for (int i = 1; i <= NUM_COLUMNS; i++) {
-        row.add(resultA.getInt(i));
-      }
-      resultSetA.add(row);
-    }
-    statementA.close();
+    // Executes the meta query.
+    Statement statement = connection.createStatement();
+    ResultSet result = statement.executeQuery(query);
+    boolean isEmpty = !result.next();
+    statement.close();
 
-    // Executes the second query.
-    Statement statementB = connection.createStatement();
-    ResultSet resultB = statementB.executeQuery(queryB);
-
-    // Retrieves the rows in second result.
-    List<List<Integer>> resultSetB = new ArrayList<>();
-    while (resultB.next()) {
-      List<Integer> row = new ArrayList<>(NUM_COLUMNS);
-      for (int i = 1; i <= NUM_COLUMNS; i++) {
-        row.add(resultB.getInt(i));
-      }
-      resultSetB.add(row);
-    }
-    statementB.close();
-
-    // Compares the two results.
-    return resultSetA.equals(resultSetB);
+    // Checks whether the result is empty.
+    return isEmpty;
   }
 
+  /**
+   * Reads input from a given file.
+   *
+   * @param fileName is the path to the given file.
+   * @return all pairs of queries in that file.
+   * @throws IOException when there is any I/O error.
+   */
   private static List<Pair> readInput(String fileName) throws IOException {
     // Creates the reader.
     FileReader fileReader = new FileReader(fileName);
