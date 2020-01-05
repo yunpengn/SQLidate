@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -40,6 +44,17 @@ public class Main {
       = "-------------------------------------------------------------";
   private static final String LINE_DELIMITER = "\n";
 
+  // The batch size used when printing progress bar.
+  private static final int BATCH_SIZE = 50;
+
+  // The names of the files to store logs.
+  private static final Path OUT_PATH = Paths.get("out.log");
+  private static final Path ERR_PATH = Paths.get("out.err.log");
+
+  // The description for output.
+  private static final String WRONG_DESC = "The following 2 queries are not equivalent.";
+  private static final String ERROR_DESC = "Meet exception when comparing the following 2 queries: %s.";
+
   /**
    * The main function.
    *
@@ -51,7 +66,7 @@ public class Main {
       System.err.println("Usage: java -jar XXX.jar <input_file_path>");
       return;
     }
-    String inputFile = args[0];
+    final String inputFile = args[0];
 
     // Whether to enable query wrapper.
     boolean wrapInput = true;
@@ -75,11 +90,18 @@ public class Main {
       }
     }
 
-    // Creates the database connection.
-    Connection connection = createConnection();
+    // Creates the database connection & the output stream.
+    final Connection connection = createConnection();
+    final Writer outWriter = Files.newBufferedWriter(OUT_PATH);
+    final Writer errWriter = Files.newBufferedWriter(ERR_PATH);
 
-    // Reads the input and compares each pair of queries.
-    Map<Pair, String> pairs = readInput(inputFile);
+    // Reads the input.
+    final Map<Pair, String> pairs = readInput(inputFile);
+
+    // Compares each pair of queries.
+    int count = 0;
+    int wrongCount = 0;
+    int errorCount = 0;
     for (Map.Entry<Pair, String> entry: pairs.entrySet()) {
       // Wraps the query to guarantee select ordering.
       String queryA = entry.getKey().first;
@@ -91,39 +113,33 @@ public class Main {
         queryB = wrapQuery(queryB);
       }
 
-      boolean isSame = true;
+      // Checks the query.
       try {
-        isSame = compareQueryResult(connection, queryA, queryB);
+        if (!compareQueryResult(connection, queryA, queryB)) {
+          wrongCount++;
+          printQueryPair(outWriter, entry.getKey(), WRONG_DESC, entry.getValue());
+        }
       } catch (SQLException e) {
-        System.err.println(PAIR_DELIMITER);
-        System.err.printf("Meet exception %s when comparing the following 2 queries: \n", e);
-        System.err.println("First query: ");
-        System.err.println(queryA);
-        System.err.println(INTERNAL_DELIMITER);
-        System.err.println("Second query: ");
-        System.err.println(queryB);
-        System.err.println(INTERNAL_DELIMITER);
-        System.err.println(entry.getValue());
-        System.err.println(PAIR_DELIMITER);
+        errorCount++;
+
+        final String desc = String.format(ERROR_DESC, e);
+        printQueryPair(errWriter, entry.getKey(), desc, entry.getValue());
       }
 
-      // Prints the output if not the same.
-      if (!isSame) {
-        System.out.println(PAIR_DELIMITER);
-        System.out.println("The following 2 queries are not equivalent:\n");
-        System.out.println("First query: ");
-        System.out.println(queryA);
-        System.out.println(INTERNAL_DELIMITER);
-        System.out.println("Second query: ");
-        System.out.println(queryB);
-        System.out.println(INTERNAL_DELIMITER);
-        System.out.println(entry.getValue());
-        System.out.println(PAIR_DELIMITER);
+      // Prints the progress bar (if necessary).
+      count++;
+      if (count % BATCH_SIZE == 0) {
+        System.out.printf("Progress: %d out of %d (%d wrong & %d error).\n",
+            count, pairs.size(), wrongCount, errorCount);
       }
     }
 
-    // Closes the database connection.
+    // Closes the database connection & output streams.
     connection.close();
+    outWriter.flush();
+    outWriter.close();
+    errWriter.flush();
+    errWriter.close();
   }
 
   /**
@@ -226,5 +242,18 @@ public class Main {
 
     // Returns the result.
     return result.toString();
+  }
+
+  private static void printQueryPair(Writer writer, Pair pair, String description, String type) throws IOException {
+    writer.write(PAIR_DELIMITER + "\n");
+    writer.write(description + "\n\n");
+    writer.write("First query:\n");
+    writer.write(pair.first + "\n");
+    writer.write(INTERNAL_DELIMITER + "\n");
+    writer.write("Second query:\n");
+    writer.write(pair.second + "\n");
+    writer.write(INTERNAL_DELIMITER + "\n");
+    writer.write(type + "\n");
+    writer.write(PAIR_DELIMITER + "\n");
   }
 }
