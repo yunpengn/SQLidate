@@ -244,6 +244,15 @@ public class Main {
     return result.toString();
   }
 
+  /**
+   * Prints out information about a pair of queries.
+   *
+   * @param writer is the given output stream.
+   * @param pair is the pair of queries.
+   * @param description is the description for this pair.
+   * @param type is the type of the transformation.
+   * @throws IOException when any I/O error happens.
+   */
   private static void printQueryPair(Writer writer, Pair pair, String description, String type) throws IOException {
     writer.write(PAIR_DELIMITER + "\n");
     writer.write(description + "\n\n");
