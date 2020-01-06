@@ -256,11 +256,11 @@ public class Main {
   private static void printQueryPair(Writer writer, Pair pair, String description, String type) throws IOException {
     writer.write(PAIR_DELIMITER + "\n");
     writer.write(description + "\n\n");
-    writer.write("First query:\n");
-    writer.write(pair.first + "\n");
+    writer.write("First query:\n\n");
+    writer.write(pair.first + ";\n");
     writer.write(INTERNAL_DELIMITER + "\n");
-    writer.write("Second query:\n");
-    writer.write(pair.second + "\n");
+    writer.write("Second query:\n\n");
+    writer.write(pair.second + ";\n");
     writer.write(INTERNAL_DELIMITER + "\n");
     writer.write(type + "\n");
     writer.write(PAIR_DELIMITER + "\n");
