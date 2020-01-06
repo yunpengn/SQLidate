@@ -257,10 +257,10 @@ public class Main {
     writer.write(PAIR_DELIMITER + "\n");
     writer.write(description + "\n\n");
     writer.write("First query:\n\n");
-    writer.write(pair.first + ";\n");
+    writer.write(pair.first + "\n");
     writer.write(INTERNAL_DELIMITER + "\n");
     writer.write("Second query:\n\n");
-    writer.write(pair.second + ";\n");
+    writer.write(pair.second + "\n");
     writer.write(INTERNAL_DELIMITER + "\n");
     writer.write(type + "\n");
     writer.write(PAIR_DELIMITER + "\n");
