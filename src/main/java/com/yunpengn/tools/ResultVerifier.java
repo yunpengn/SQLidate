@@ -73,7 +73,7 @@ public class ResultVerifier {
    */
   public void verify(final String fileName) throws IOException {
     // Reads the input.
-    final Map<Pair, String> pairs = readInput(fileName);
+    final Map<QueryPair, String> pairs = readInput(fileName);
 
     // Output stream to output log.
     final Writer outWriter = Files.newBufferedWriter(OUT_PATH);
@@ -84,7 +84,7 @@ public class ResultVerifier {
     int count = 0;
     int wrongCount = 0;
     int errorCount = 0;
-    for (Map.Entry<Pair, String> entry: pairs.entrySet()) {
+    for (Map.Entry<QueryPair, String> entry: pairs.entrySet()) {
       // Wraps the query to guarantee select ordering.
       String queryA = entry.getKey().first;
       if (wrapInput) {
@@ -130,18 +130,18 @@ public class ResultVerifier {
    * @return all pairs of queries in that file.
    * @throws IOException when there is any I/O error.
    */
-  private Map<Pair, String> readInput(String fileName) throws IOException {
+  private Map<QueryPair, String> readInput(String fileName) throws IOException {
     // Creates the reader.
     FileReader fileReader = new FileReader(fileName);
     BufferedReader reader = new BufferedReader(fileReader);
 
     // Reads line by line.
-    Map<Pair, String> result = new HashMap<>();
+    Map<QueryPair, String> result = new HashMap<>();
     while (PAIR_DELIMITER.equals(reader.readLine())) {
       String first = readUntil(reader, INTERNAL_DELIMITER);
       String second = readUntil(reader, INTERNAL_DELIMITER);
       String description = readUntil(reader, PAIR_DELIMITER);
-      result.put(new Pair(first, second), description);
+      result.put(new QueryPair(first, second), description);
     }
 
     // Closes the reader and returns the result.
@@ -217,7 +217,7 @@ public class ResultVerifier {
    * @param type is the type of the transformation.
    * @throws IOException when any I/O error happens.
    */
-  private void printQueryPair(Writer writer, Pair pair, String description, String type) throws IOException {
+  private void printQueryPair(Writer writer, QueryPair pair, String description, String type) throws IOException {
     writer.write(PAIR_DELIMITER + "\n");
     writer.write(description + "\n\n");
     writer.write("First query:\n\n");

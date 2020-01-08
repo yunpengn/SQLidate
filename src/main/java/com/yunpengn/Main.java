@@ -1,5 +1,6 @@
 package com.yunpengn;
 
+import com.yunpengn.tools.DataLoader;
 import com.yunpengn.tools.ResultVerifier;
 
 import java.io.FileInputStream;
@@ -22,15 +23,41 @@ public class Main {
   public static void main(String[] args) throws Exception {
     // Input validation.
     if (args.length == 0) {
-      System.err.println("Usage: java -jar XXX.jar <input_file_path>");
+      System.err.println("Usage: java -jar XXX.jar <command>");
       return;
     }
-    final String inputFile = args[0];
+
+    // Switch functionality based on first argument.
+    switch (args[0]) {
+    case "check":
+      checkQueryResult(args);
+      break;
+    case "load":
+      loadData(args);
+      break;
+    default:
+      System.err.println("Invalid command.");
+    }
+  }
+
+  /**
+   * Checks query results.
+   *
+   * @param args are the CLI arguments.
+   * @throws Exception when there is any error.
+   */
+  private static void checkQueryResult(String[] args) throws Exception {
+    // Input validation.
+    if (args.length == 1) {
+      System.err.println("Usage: java -jar XXX.jar check <input_file_name> [Y/N]");
+      return;
+    }
+    final String inputFile = args[1];
 
     // Whether to enable query wrapper.
     boolean wrapInput = true;
-    if (args.length > 1) {
-      switch (args[1].toLowerCase()) {
+    if (args.length > 2) {
+      switch (args[2].toLowerCase()) {
       case "y":
       case "yes":
       case "true":
@@ -44,7 +71,7 @@ public class Main {
         wrapInput = false;
         break;
       default:
-        System.err.println("Usage: java -jar XXX.jar <input_file_path> [Y/N]");
+        System.err.println("Invalid argument: " + args[2]);
         return;
       }
     }
@@ -56,6 +83,31 @@ public class Main {
 
     // Closes the database connection.
     connection.close();
+  }
+
+  /**
+   * Loads data into database.
+   *
+   * @param args are the CLI arguments.
+   */
+  private static void loadData(String[] args) {
+    // Input validation.
+    if (args.length == 1) {
+      System.err.println("Usage: java -jar XXX.jar load <num_of_rows> [num_of_tables]");
+      return;
+    }
+    final int numRows = Integer.parseInt(args[1]);
+
+    // Number of tables.
+    final boolean truncateTable = true;
+    DataLoader loader = new DataLoader(truncateTable);
+    if (args.length > 2) {
+      final int numTables = Integer.parseInt(args[2]);
+      loader = new DataLoader(truncateTable, numTables);
+    }
+
+    // Loads data.
+    loader.load(numRows);
   }
 
   /**
