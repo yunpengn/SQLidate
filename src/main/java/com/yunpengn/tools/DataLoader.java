@@ -53,7 +53,7 @@ public class DataLoader {
     }
 
     // Insert data into each table.
-    for (int i = 0; i < numRows; i++) {
+    for (int i = 0; i < numTables; i++) {
       final String tableName = tableNames.get(i);
 
       // Generates data.
