@@ -35,7 +35,6 @@ public class ResultVerifier {
   );
 
   private static final Set<String> IGNORE_RULES = new HashSet<>(Arrays.asList(
-      "org.apache.calcite.rel.rules.custom.BestMatchNullifyPullUpRule"
   ));
 
   // The default delimiter used in result output.
