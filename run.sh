@@ -3,7 +3,7 @@
 load_data() {
   cd "$(dirname "$0")"
   ./gradlew shadowJar
-  java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar load 20
+  java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar load 14
 }
 
 check_query() {
