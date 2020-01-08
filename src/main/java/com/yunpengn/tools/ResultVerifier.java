@@ -39,7 +39,7 @@ public class ResultVerifier {
   private static final String LINE_DELIMITER = "\n";
 
   // The batch size used when printing progress bar.
-  private static final int BATCH_SIZE = 50;
+  private static final int BATCH_SIZE = 10;
 
   // The description for output.
   private static final String WRONG_DESC = "The following 2 queries are not equivalent.";
