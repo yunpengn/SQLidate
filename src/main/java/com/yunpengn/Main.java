@@ -90,7 +90,7 @@ public class Main {
    *
    * @param args are the CLI arguments.
    */
-  private static void loadData(String[] args) {
+  private static void loadData(String[] args) throws Exception {
     // Input validation.
     if (args.length == 1) {
       System.err.println("Usage: java -jar XXX.jar load <num_of_rows> [num_of_tables]");
@@ -99,15 +99,19 @@ public class Main {
     final int numRows = Integer.parseInt(args[1]);
 
     // Number of tables.
+    final Connection connection = createConnection();
     final boolean truncateTable = true;
-    DataLoader loader = new DataLoader(truncateTable);
+    DataLoader loader = new DataLoader(connection, truncateTable);
     if (args.length > 2) {
       final int numTables = Integer.parseInt(args[2]);
-      loader = new DataLoader(truncateTable, numTables);
+      loader = new DataLoader(connection, truncateTable, numTables);
     }
 
     // Loads data.
     loader.load(numRows);
+
+    // Closes the database connection.
+    connection.close();
   }
 
   /**
