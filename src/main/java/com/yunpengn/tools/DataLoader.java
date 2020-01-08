@@ -23,7 +23,7 @@ public class DataLoader {
 
   // The default range for input data.
   private static final int defaultLower = 0;
-  private static final int defaultUpper = 100;
+  private static final int defaultUpper = 30;
 
   // The database connection.
   private final Connection connection;
