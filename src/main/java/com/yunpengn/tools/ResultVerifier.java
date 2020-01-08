@@ -34,8 +34,12 @@ public class ResultVerifier {
       "aID", "bID", "cID", "dID", "eID", "fID", "gID", "hID", "iID", "jID", "kID", "lID"
   );
 
+  // All rules that we want to ignore.
   private static final Set<String> IGNORE_RULES = new HashSet<>(Arrays.asList(
   ));
+
+  // The expected number of tables.
+  private static final int NUM_TABLES = 5;
 
   // The default delimiter used in result output.
   private static final String PAIR_DELIMITER
@@ -93,14 +97,8 @@ public class ResultVerifier {
 
     pairs.entrySet().parallelStream().forEach(entry -> {
       // Wraps the query to guarantee select ordering.
-      String queryA = entry.getKey().first;
-      if (wrapInput) {
-        queryA = wrapQuery(queryA);
-      }
-      String queryB = entry.getKey().second;
-      if (wrapInput) {
-        queryB = wrapQuery(queryB);
-      }
+      final String queryA = entry.getKey().first;
+      final String queryB = entry.getKey().second;
 
       // Checks the query.
       try {
@@ -139,17 +137,23 @@ public class ResultVerifier {
    */
   private Map<QueryPair, String> readInput(String fileName) throws IOException {
     // Creates the reader.
-    FileReader fileReader = new FileReader(fileName);
-    BufferedReader reader = new BufferedReader(fileReader);
+    final FileReader fileReader = new FileReader(fileName);
+    final BufferedReader reader = new BufferedReader(fileReader);
 
     // Reads line by line.
     Map<QueryPair, String> result = new HashMap<>();
     while (PAIR_DELIMITER.equals(reader.readLine())) {
       String first = readUntil(reader, INTERNAL_DELIMITER);
+      if (wrapInput) {
+        first = wrapQuery(first);
+      }
       String second = readUntil(reader, INTERNAL_DELIMITER);
+      if (wrapInput) {
+        second = wrapQuery(second);
+      }
       String description = readUntil(reader, PAIR_DELIMITER);
 
-      if (!IGNORE_RULES.contains(description)) {
+      if (!IGNORE_RULES.contains(description) && first.length() != 0 && second.length() != 0) {
         result.put(new QueryPair(first, second), description);
       }
     }
@@ -192,6 +196,9 @@ public class ResultVerifier {
     String availableFields = FIELD_NAMES.stream()
         .filter(field -> input.contains(field) || input.contains("\"" + field.substring(0, 1) + "\""))
         .collect(Collectors.joining("\", \""));
+    if (availableFields.length() != NUM_TABLES * 7 - 4) {
+      return "";
+    }
     return String.format(WRAP_QUERY, availableFields, input);
   }
 
