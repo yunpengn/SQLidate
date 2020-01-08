@@ -38,6 +38,9 @@ public class ResultVerifier {
   private static final Set<String> IGNORE_RULES = new HashSet<>(Arrays.asList(
   ));
 
+  // The maximum number of queries to verify.
+  private static final int MAX_QUERIES = 100_000;
+
   // The expected number of tables.
   private static final int NUM_TABLES = 5;
 
@@ -155,6 +158,10 @@ public class ResultVerifier {
 
       if (!IGNORE_RULES.contains(description) && first.length() != 0 && second.length() != 0) {
         result.put(new QueryPair(first, second), description);
+      }
+
+      if (result.size() >= MAX_QUERIES) {
+        break;
       }
     }
 
