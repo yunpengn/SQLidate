@@ -49,10 +49,12 @@ public class DataLoader {
   public void load(final int lower, final int upper, final int numRows) throws SQLException {
     // Truncate all tables if necessary.
     if (truncateTable) {
+      System.out.println("Going to truncate all tables ...");
       truncateTables();
     }
 
     // Insert data into each table.
+    System.out.println("\nGoing to insert data into all tables ...");
     for (int i = 0; i < numTables; i++) {
       final String tableName = tableNames.get(i);
 
@@ -75,6 +77,7 @@ public class DataLoader {
     for (int i = 0; i < numTables; i++) {
       final String tableName = tableNames.get(i);
       final String query = String.format(TRUNCATE_QUERY, tableName);
+      System.out.println("Going to truncate table \"" + tableName + "\" ...");
 
       final Statement statement = connection.createStatement();
       statement.execute(query);
@@ -92,6 +95,7 @@ public class DataLoader {
   private void insertTable(final String tableName, final List<Integer> values) throws SQLException {
     final String columnName = tableName + "ID";
     final String queryTemplate = String.format(INSERT_QUERY, tableName, columnName);
+    System.out.println("Going to insert data into table \"" + tableName + "\" ...");
 
     // Inserts each value.
     for (Integer value: values) {
