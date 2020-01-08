@@ -13,8 +13,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,10 @@ public class ResultVerifier {
   private static final List<String> FIELD_NAMES = Arrays.asList(
       "aID", "bID", "cID", "dID", "eID", "fID", "gID", "hID", "iID", "jID", "kID", "lID"
   );
+
+  private static final Set<String> IGNORE_RULES = new HashSet<>(Arrays.asList(
+      "org.apache.calcite.rel.rules.custom.BestMatchNullifyPullUpRule"
+  ));
 
   // The default delimiter used in result output.
   private static final String PAIR_DELIMITER
@@ -143,7 +149,10 @@ public class ResultVerifier {
       String first = readUntil(reader, INTERNAL_DELIMITER);
       String second = readUntil(reader, INTERNAL_DELIMITER);
       String description = readUntil(reader, PAIR_DELIMITER);
-      result.put(new QueryPair(first, second), description);
+
+      if (!IGNORE_RULES.contains(description)) {
+        result.put(new QueryPair(first, second), description);
+      }
     }
 
     // Closes the reader and returns the result.
