@@ -100,20 +100,28 @@ public class ResultVerifier {
 
     pairs.entrySet().parallelStream().forEach(entry -> {
       // Wraps the query to guarantee select ordering.
-      final String queryA = entry.getKey().first;
-      final String queryB = entry.getKey().second;
+      String queryA = entry.getKey().first;
+      if (wrapInput) {
+        queryA = wrapQuery(queryA);
+      }
+      String queryB = entry.getKey().second;
+      if (wrapInput) {
+        queryB = wrapQuery(queryB);
+      }
 
       // Checks the query.
-      try {
-        if (!compareQueryResult(connection, queryA, queryB)) {
-          wrongCount.incrementAndGet();
-          printQueryPair(outWriter, entry.getKey(), WRONG_DESC, entry.getValue());
-        }
-      } catch (SQLException e) {
-        errorCount.incrementAndGet();
+      if (!queryA.isEmpty() && !queryB.isEmpty()) {
+        try {
+          if (!compareQueryResult(connection, queryA, queryB)) {
+            wrongCount.incrementAndGet();
+            printQueryPair(outWriter, entry.getKey(), WRONG_DESC, entry.getValue());
+          }
+        } catch (SQLException e) {
+          errorCount.incrementAndGet();
 
-        final String desc = String.format(ERROR_DESC, e);
-        printQueryPair(errWriter, entry.getKey(), desc, entry.getValue());
+          final String desc = String.format(ERROR_DESC, e);
+          printQueryPair(errWriter, entry.getKey(), desc, entry.getValue());
+        }
       }
 
       // Prints the progress bar (if necessary).
@@ -147,16 +155,10 @@ public class ResultVerifier {
     Map<QueryPair, String> result = new HashMap<>();
     while (PAIR_DELIMITER.equals(reader.readLine())) {
       String first = readUntil(reader, INTERNAL_DELIMITER);
-      if (wrapInput) {
-        first = wrapQuery(first);
-      }
       String second = readUntil(reader, INTERNAL_DELIMITER);
-      if (wrapInput) {
-        second = wrapQuery(second);
-      }
       String description = readUntil(reader, PAIR_DELIMITER);
 
-      if (!IGNORE_RULES.contains(description) && first.length() != 0 && second.length() != 0) {
+      if (!IGNORE_RULES.contains(description)) {
         result.put(new QueryPair(first, second), description);
       }
 
