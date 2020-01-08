@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -81,10 +82,11 @@ public class ResultVerifier {
     final Writer errWriter = Files.newBufferedWriter(ERR_PATH);
 
     // Compares each pair of queries.
-    int count = 0;
-    int wrongCount = 0;
-    int errorCount = 0;
-    for (Map.Entry<QueryPair, String> entry: pairs.entrySet()) {
+    final AtomicInteger count = new AtomicInteger(0);
+    final AtomicInteger wrongCount = new AtomicInteger(0);
+    final AtomicInteger errorCount = new AtomicInteger(0);
+
+    pairs.entrySet().parallelStream().forEach(entry -> {
       // Wraps the query to guarantee select ordering.
       String queryA = entry.getKey().first;
       if (wrapInput) {
@@ -98,23 +100,23 @@ public class ResultVerifier {
       // Checks the query.
       try {
         if (!compareQueryResult(connection, queryA, queryB)) {
-          wrongCount++;
+          wrongCount.incrementAndGet();
           printQueryPair(outWriter, entry.getKey(), WRONG_DESC, entry.getValue());
         }
       } catch (SQLException e) {
-        errorCount++;
+        errorCount.incrementAndGet();
 
         final String desc = String.format(ERROR_DESC, e);
         printQueryPair(errWriter, entry.getKey(), desc, entry.getValue());
       }
 
       // Prints the progress bar (if necessary).
-      count++;
-      if (count % BATCH_SIZE == 0) {
+      final int currentCount = count.incrementAndGet();
+      if (currentCount % BATCH_SIZE == 0) {
         System.out.printf("Progress: %d out of %d (%d wrong & %d error).\n",
-            count, pairs.size(), wrongCount, errorCount);
+            currentCount, pairs.size(), wrongCount.get(), errorCount.get());
       }
-    }
+    });
 
     // Closes the output streams.
     outWriter.flush();
@@ -215,18 +217,24 @@ public class ResultVerifier {
    * @param pair is the pair of queries.
    * @param description is the description for this pair.
    * @param type is the type of the transformation.
-   * @throws IOException when any I/O error happens.
    */
-  private void printQueryPair(Writer writer, QueryPair pair, String description, String type) throws IOException {
-    writer.write(PAIR_DELIMITER + "\n");
-    writer.write(description + "\n\n");
-    writer.write("First query:\n\n");
-    writer.write(pair.first + "\n");
-    writer.write(INTERNAL_DELIMITER + "\n");
-    writer.write("Second query:\n\n");
-    writer.write(pair.second + "\n");
-    writer.write(INTERNAL_DELIMITER + "\n");
-    writer.write(type + "\n");
-    writer.write(PAIR_DELIMITER + "\n");
+  private void printQueryPair(Writer writer, QueryPair pair, String description, String type) {
+    final String str = PAIR_DELIMITER + "\n"
+        + description
+        + "\n\nFirst query:\n\n"
+        + pair.first + "\n"
+        + INTERNAL_DELIMITER + "\n"
+        + "Second query:\n\n"
+        + pair.second + "\n"
+        + INTERNAL_DELIMITER + "\n"
+        + type + "\n"
+        + PAIR_DELIMITER + "\n";
+
+    // Prints the output.
+    try {
+      writer.write(str);
+    } catch (IOException e) {
+      System.err.println(str);
+    }
   }
 }
