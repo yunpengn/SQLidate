@@ -1,0 +1,40 @@
+-- Creates the tables.
+DROP TABLE IF EXISTS public.a;
+CREATE TABLE IF NOT EXISTS public.a (
+    "aID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.b;
+CREATE TABLE IF NOT EXISTS public.b (
+    "bID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.c;
+CREATE TABLE IF NOT EXISTS public.c (
+    "cID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.d;
+CREATE TABLE IF NOT EXISTS public.d (
+    "dID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.e;
+CREATE TABLE IF NOT EXISTS public.e (
+    "eID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.f;
+CREATE TABLE IF NOT EXISTS public.f (
+    "fID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.g;
+CREATE TABLE IF NOT EXISTS public.g (
+    "gID" int PRIMARY KEY
+);
+
+DROP TABLE IF EXISTS public.h;
+CREATE TABLE IF NOT EXISTS public.h (
+    "hID" int PRIMARY KEY
+);

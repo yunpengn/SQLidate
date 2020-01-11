@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 public class DataLoader {
   // All possible table names.
   private static final List<String> tableNames = List.of(
-      "a", "b", "c", "d", "e"
+      "a", "b", "c", "d", "e", "f", "g", "h"
   );
 
   // All query templates.
