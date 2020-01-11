@@ -154,12 +154,14 @@ public class ResultVerifier {
     // Reads line by line.
     Map<QueryPair, String> result = new HashMap<>();
     while (PAIR_DELIMITER.equals(reader.readLine())) {
+      String origin = readUntil(reader, INTERNAL_DELIMITER);
       String first = readUntil(reader, INTERNAL_DELIMITER);
       String second = readUntil(reader, INTERNAL_DELIMITER);
       String description = readUntil(reader, PAIR_DELIMITER);
 
       if (!IGNORE_RULES.contains(description)) {
-        result.put(new QueryPair(first, second), description);
+        QueryPair queryPair = new QueryPair(origin, first, second);
+        result.put(queryPair, description);
       }
 
       if (result.size() >= MAX_QUERIES) {
@@ -245,7 +247,10 @@ public class ResultVerifier {
   private void printQueryPair(Writer writer, QueryPair pair, String description, String type) {
     final String str = PAIR_DELIMITER + "\n"
         + description
-        + "\n\nFirst query:\n\n"
+        + "\n\nOriginal query:\n\n"
+        + pair.origin + "\n"
+        + INTERNAL_DELIMITER + "\n"
+        + "First query:\n\n"
         + pair.first + "\n"
         + INTERNAL_DELIMITER + "\n"
         + "Second query:\n\n"
