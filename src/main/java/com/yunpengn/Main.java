@@ -6,6 +6,7 @@ import com.yunpengn.tools.ResultVerifier;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.ZonedDateTime;
 import java.util.Properties;
 
 /**
@@ -28,6 +29,7 @@ public class Main {
     }
 
     // Switch functionality based on first argument.
+    System.out.println("Program started at " + ZonedDateTime.now() + ".\n");
     switch (args[0]) {
     case "check":
       checkQueryResult(args);
@@ -38,6 +40,7 @@ public class Main {
     default:
       System.err.println("Invalid command.");
     }
+    System.out.println("Program finished at " + ZonedDateTime.now() + ".\n");
   }
 
   /**
