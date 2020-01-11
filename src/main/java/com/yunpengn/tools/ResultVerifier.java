@@ -207,7 +207,10 @@ public class ResultVerifier {
     String availableFields = FIELD_NAMES.stream()
         .filter(field -> input.contains(field) || input.contains("\"" + field.substring(0, 1) + "\""))
         .collect(Collectors.joining("\", \""));
-    if (availableFields.length() != NUM_TABLES * 7 - 4) {
+
+    // Only proceeds if this is potentially a root node (i.e., contains all tables and
+    // best-match operator).
+    if (availableFields.length() != NUM_TABLES * 7 - 4 || !input.contains("PRECEDING")) {
       return "";
     }
     return String.format(WRAP_QUERY, availableFields, input);
