@@ -88,6 +88,7 @@ public class ResultVerifier {
   public void verify(final String fileName) throws IOException {
     // Reads the input.
     final Map<QueryPair, String> pairs = readInput(fileName);
+    System.out.printf("We have discovered %d pairs of queries.\n", pairs.size());
 
     // Output stream to output log.
     final Writer outWriter = Files.newBufferedWriter(OUT_PATH);
