@@ -104,11 +104,11 @@ public class ResultVerifier {
       // Wraps the query to guarantee select ordering.
       String queryA = entry.getKey().first;
       if (wrapInput) {
-        queryA = wrapQuery(queryA);
+        queryA = wrapQuery(queryA, false);
       }
       String queryB = entry.getKey().second;
       if (wrapInput) {
-        queryB = wrapQuery(queryB);
+        queryB = wrapQuery(queryB, true);
       }
 
       // Checks the query.
@@ -205,14 +205,16 @@ public class ResultVerifier {
    * @param input is the input query.
    * @return the wrapped query.
    */
-  private String wrapQuery(String input) {
+  private String wrapQuery(String input, boolean isTransformed) {
     String availableFields = FIELD_NAMES.stream()
         .filter(field -> input.contains(field) || input.contains("\"" + field.substring(0, 1) + "\""))
         .collect(Collectors.joining("\", \""));
 
     // Only proceeds if this is potentially a root node (i.e., contains all tables and
     // best-match operator).
-    if (availableFields.length() != NUM_TABLES * 7 - 4 || !input.contains("PRECEDING")) {
+    if (availableFields.length() != NUM_TABLES * 7 - 4) {
+      return "";
+    } else if (isTransformed && !input.contains("PRECEDING")) {
       return "";
     }
     return String.format(WRAP_QUERY, availableFields, input);
