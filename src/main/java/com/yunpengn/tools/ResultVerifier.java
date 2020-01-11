@@ -36,6 +36,7 @@ public class ResultVerifier {
 
   // All rules that we want to ignore.
   private static final Set<String> IGNORE_RULES = new HashSet<>(Arrays.asList(
+      "org.apache.calcite.rel.rules.custom.BestMatchNullifyPullUpRule"
   ));
 
   // The maximum number of queries to verify.
