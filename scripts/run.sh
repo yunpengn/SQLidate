@@ -2,12 +2,14 @@
 
 load_data() {
   cd "$(dirname "$0")"
+  cd ..
   ./gradlew shadowJar
   java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar load 13
 }
 
 check_query() {
   cd "$(dirname "$0")"
+  cd ..
   ./gradlew shadowJar
   java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar check /Users/yunpeng/Projects/calcite/core/output.txt
 }
