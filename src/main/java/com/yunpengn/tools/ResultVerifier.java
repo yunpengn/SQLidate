@@ -40,7 +40,7 @@ public class ResultVerifier {
   ));
 
   // The maximum number of queries to verify.
-  private static final int MAX_QUERIES = 100_000;
+  private static final int MAX_QUERIES = 1_000_000;
 
   // The expected number of tables.
   private static final int NUM_TABLES = 5;
