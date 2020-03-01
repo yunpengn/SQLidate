@@ -1,5 +1,6 @@
 package com.yunpengn;
 
+import com.yunpengn.tools.DataGenerator;
 import com.yunpengn.tools.DataLoader;
 import com.yunpengn.tools.ResultVerifier;
 
@@ -33,6 +34,9 @@ public class Main {
     switch (args[0]) {
     case "check":
       checkQueryResult(args);
+      break;
+    case "generate":
+      generate(args);
       break;
     case "load":
       loadData(args);
@@ -86,6 +90,11 @@ public class Main {
 
     // Closes the database connection.
     connection.close();
+  }
+
+  private static void generate(String[] args) throws Exception {
+    DataGenerator generator = new DataGenerator(0, 100);
+    generator.run();
   }
 
   /**

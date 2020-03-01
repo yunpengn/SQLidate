@@ -11,7 +11,7 @@ check_query() {
   cd "$(dirname "$0")"
   cd ..
   ./gradlew shadowJar
-  java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar check /Users/yunpeng/Projects/calcite/core/output.txt
+  java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar check /Users/yunpeng/Projects/calcite/core/output_0.txt
 }
 
 if [[ "$1" == "load" ]]; then
