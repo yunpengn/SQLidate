@@ -13,8 +13,10 @@ public class DataGenerator {
 
   public void run() throws Exception {
     final Writer writer = Files.newBufferedWriter(OUTPUT);
+    String query = "";
+    assert query.equals(query.toLowerCase());
 
-    String query = generate("a", 5, 0, 20);
+    query = generate("a", 5, 0, 20);
     writer.write(query);
     query = generate("b", 10, 0, 40);
     writer.write(query);
