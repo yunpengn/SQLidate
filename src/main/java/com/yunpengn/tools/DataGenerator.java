@@ -5,43 +5,48 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Random;
 
 public class DataGenerator {
   private static final Path OUTPUT = Paths.get("scripts/insert_data.sql");
-  private static final Map<String, Integer> tables = Map.of(
-      "a", 1,
-      "b", 1,
-      "c", 1,
-      "d", 1,
-      "e", 1,
-      "f", 1,
-      "g", 1,
-      "h", 1
-  );
-
-  private final int lower;
-  private final int upper;
-
-  public DataGenerator(final int lower, final int upper) {
-    this.lower = lower;
-    this.upper = upper;
-  }
+  private static final Random RANDOM = new Random();
 
   public void run() throws Exception {
     final Writer writer = Files.newBufferedWriter(OUTPUT);
 
-    for (final Entry<String, Integer> entry: tables.entrySet()) {
-      final String query = generate(entry.getKey(), entry.getValue());
-      writer.write(query);
-      writer.write("\n\n");
-    }
+    String query = generate("a", 5, 0, 20);
+    writer.write(query);
+    query = generate("b", 10, 0, 40);
+    writer.write(query);
+    query = generate("c", 50, -50, 50);
+    writer.write(query);
+    query = generate("d", 150, -100, 200);
+    writer.write(query);
+    query = generate("e", 200, -100, 500);
+    writer.write(query);
+    query = generate("f", 800, -500, 1000);
+    writer.write(query);
+    query = generate("g", 1500, -500, 3000);
+    writer.write(query);
+    query = generate("h", 6000, -500, 10000);
+    writer.write(query);
 
     writer.flush();
     writer.close();
   }
 
-  private String generate(final String tableName, final int numRows) {
-    return "";
+  private String generate(final String tableName, final int numRows, final int upper, final int lower) {
+    final StringBuilder builder = new StringBuilder();
+    builder.append(String.format("INSERT INTO %s (\"%sID\") VALUES ", tableName, tableName));
+
+    // Inserts data.
+    for (int i = 0; i < numRows; i++) {
+      final int num = RANDOM.nextInt(upper - lower) + lower;
+      builder.append(String.format("(%d)", num));
+      builder.append(i == numRows - 1 ? ", " : ";");
+    }
+    builder.append("\n\n");
+
+    return builder.toString();
   }
 }

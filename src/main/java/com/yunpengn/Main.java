@@ -93,7 +93,7 @@ public class Main {
   }
 
   private static void generate(String[] args) throws Exception {
-    DataGenerator generator = new DataGenerator(0, 100);
+    final DataGenerator generator = new DataGenerator();
     generator.run();
   }
 
