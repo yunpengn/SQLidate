@@ -16,8 +16,11 @@ check_query() {
 
 if [[ "$1" == "load" ]]; then
   load_data
+elif [[ "$1" == "generate" ]]; then
+  psql random -f create_db.sql
+  psql random -f insert_data.sql
 elif [[ "$1" == "check" ]]; then
   check_query
 else
-  echo "Unknown command. Please use \"./run.sh [load/check]\" for the script."
+  echo "Unknown command. Please use \"./run.sh [load/check/generate]\" for the script."
 fi
