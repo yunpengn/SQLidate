@@ -1,6 +1,6 @@
 -- Creates the database.
-DROP DATABASE IF EXISTS random;
-CREATE DATABASE random;
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
 
 -- Creates the tables.
 CREATE TABLE a (
