@@ -14,11 +14,17 @@ check_query() {
   java -jar ./build/libs/SQLidate-1.0-SNAPSHOT-all.jar check /Users/yunpeng/Projects/calcite/core/output_0.txt
 }
 
+generate() {
+  cd "$(dirname "$0")"
+  cd ..
+  psql random -f create_db.sql
+  psql random -f insert_data.sql
+}
+
 if [[ "$1" == "load" ]]; then
   load_data
 elif [[ "$1" == "generate" ]]; then
-  psql random -f create_db.sql
-  psql random -f insert_data.sql
+  generate
 elif [[ "$1" == "check" ]]; then
   check_query
 else
