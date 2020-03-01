@@ -16,7 +16,6 @@ check_query() {
 
 generate() {
   cd "$(dirname "$0")"
-  cd ..
   psql random -f create_db.sql
   psql random -f insert_data.sql
 }
