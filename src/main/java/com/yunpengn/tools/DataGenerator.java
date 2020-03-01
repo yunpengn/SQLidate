@@ -38,6 +38,8 @@ public class DataGenerator {
   }
 
   private String generate(final String tableName, final int numRows, final int upper, final int lower) {
+    System.out.printf("Going to generate INSERT query for table %s.\n", tableName);
+    
     final StringBuilder builder = new StringBuilder();
     builder.append(String.format("INSERT INTO %s (\"%sID\") VALUES ", tableName, tableName));
 
