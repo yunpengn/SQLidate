@@ -9,7 +9,7 @@ import java.util.Random;
 public class DataBigGenerator {
   private static final String FILE_FORMAT = "scripts/tables/%s.sql";
   private static final Random RANDOM = new Random();
-  private static final int BATCH_SIZE = 100_000;
+  private static final int BATCH_SIZE = 50_000;
 
   public void run() throws Exception {
     generate("a", 1_000_000, 0, 100_000);
@@ -27,7 +27,7 @@ public class DataBigGenerator {
     System.out.printf("Going to generate INSERT query for table %s.\n", tableName);
 
     // Writes the content.
-    final String prefix = String.format("INSERT INTO %s (\"%sID\") VALUES ", tableName, tableName);
+    final String prefix = String.format("INSERT INTO %s (\"%sID\") VALUES \n", tableName, tableName);
     writer.write(prefix);
     for (int i = 1; i <= numRows; i++) {
       final int num = RANDOM.nextInt(upper - lower) + lower;
@@ -36,6 +36,7 @@ public class DataBigGenerator {
 
       if (i % BATCH_SIZE == 0) {
         System.out.printf("Have generated %d entries.\n", i);
+        writer.write("\n");
       }
     }
     writer.write("\n\n");
