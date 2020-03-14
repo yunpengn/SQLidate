@@ -13,7 +13,6 @@ import java.util.stream.IntStream;
 
 public class DataGenerator {
   private static final Path OUTPUT = Paths.get("scripts/insert_data.sql");
-  private static final Random RANDOM = new Random();
 
   public void run() throws Exception {
     final Writer writer = Files.newBufferedWriter(OUTPUT);

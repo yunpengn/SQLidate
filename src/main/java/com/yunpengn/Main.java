@@ -1,5 +1,6 @@
 package com.yunpengn;
 
+import com.yunpengn.tools.DataBigGenerator;
 import com.yunpengn.tools.DataGenerator;
 import com.yunpengn.tools.DataLoader;
 import com.yunpengn.tools.ResultVerifier;
@@ -37,6 +38,9 @@ public class Main {
       break;
     case "generate":
       generate(args);
+      break;
+    case "big-generate":
+      bigGenerate(args);
       break;
     case "load":
       loadData(args);
@@ -94,6 +98,11 @@ public class Main {
 
   private static void generate(String[] args) throws Exception {
     final DataGenerator generator = new DataGenerator();
+    generator.run();
+  }
+
+  private static void bigGenerate(String[] args) throws Exception {
+    final DataBigGenerator generator = new DataBigGenerator();
     generator.run();
   }
 
