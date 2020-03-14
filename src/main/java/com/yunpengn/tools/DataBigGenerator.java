@@ -7,17 +7,17 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 public class DataBigGenerator {
-  private static final String FILE_FORMAT = "scripts/%s.sql";
+  private static final String FILE_FORMAT = "scripts/tables/%s.sql";
   private static final Random RANDOM = new Random();
   private static final int BATCH_SIZE = 100_000;
 
   public void run() throws Exception {
-    generate("a", 1_000_000, 0, 1000);
-    generate("b", 1_000_000, 0, 1000);
-    generate("c", 1_000_000, 0, 1000);
-    generate("d", 1_000_000, 0, 1000);
-    generate("e", 1_000_000, 0, 1000);
-    generate("f", 1_000_000, 0, 1000);
+    generate("a", 1_000_000, 0, 100_000);
+    generate("b", 1_000_000, 0, 100_000);
+    generate("c", 1_000_000, 0, 100_000);
+    generate("d", 1_000_000, 0, 100_000);
+    generate("e", 1_000_000, 0, 100_000);
+    generate("f", 1_000_000, 0, 100_000);
   }
 
   private void generate(final String tableName, final int numRows, final int lower, final int upper) throws Exception {
