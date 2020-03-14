@@ -37,7 +37,7 @@ if [[ "$1" == "load" ]]; then
   load_data
 elif [[ "$1" == "generate" ]]; then
   generate
-elif [[ "$1" == "generate-big" ]]; then
+elif [[ "$1" == "generateBig" ]]; then
   generateBig
 elif [[ "$1" == "check" ]]; then
   check_query
