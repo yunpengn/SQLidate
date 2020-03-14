@@ -17,7 +17,7 @@ check_query() {
 generate() {
   cd "$(dirname "$0")"
   psql random -f create_db.sql
-  psql random -f insert_data.sql
+  psql random -f insert_data_small.sql
 }
 
 if [[ "$1" == "load" ]]; then
