@@ -4,6 +4,7 @@ import com.yunpengn.tools.DataBigGenerator;
 import com.yunpengn.tools.DataGenerator;
 import com.yunpengn.tools.DataLoader;
 import com.yunpengn.tools.ResultVerifier;
+import com.yunpengn.tools.StatsChecker;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
@@ -44,6 +45,9 @@ public class Main {
       break;
     case "load":
       loadData(args);
+      break;
+    case "stats":
+      checkStats(args);
       break;
     default:
       System.err.println("Invalid command.");
@@ -104,6 +108,11 @@ public class Main {
   private static void bigGenerate(String[] args) throws Exception {
     final DataBigGenerator generator = new DataBigGenerator();
     generator.run();
+  }
+
+  private static void checkStats(String[] args) throws Exception {
+    final StatsChecker checker = new StatsChecker();
+    checker.run(args[0]);
   }
 
   /**

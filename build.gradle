@@ -16,7 +16,8 @@ wrapper {
 
 dependencies {
     implementation (
-            'org.postgresql:postgresql:42.2.7'
+            'org.postgresql:postgresql:42.2.7',
+            'commons-io:commons-io:2.6'
     )
     testImplementation(
             'org.junit.jupiter:junit-jupiter-api:5.5.2'
