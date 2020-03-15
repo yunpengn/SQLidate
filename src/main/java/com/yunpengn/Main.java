@@ -112,7 +112,7 @@ public class Main {
 
   private static void checkStats(String[] args) throws Exception {
     final StatsChecker checker = new StatsChecker();
-    checker.run(args[0]);
+    checker.run(args[1]);
   }
 
   /**
