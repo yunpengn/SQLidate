@@ -33,14 +33,14 @@ public class StatsChecker {
       }
 
       // Extracts the content.
-      final String[] lines = getLastLines(file, 2);
-      final Matcher failureMatcher = FAILURE_LINE_FORMAT.matcher(lines[0]);
+      final String[] lines = getLastLines(file, 3);
+      final Matcher failureMatcher = FAILURE_LINE_FORMAT.matcher(lines[1]);
       if (!failureMatcher.find()) {
-        System.err.printf("%s does not match the given pattern %s.\n", lines[0], FAILURE_LINE_FORMAT);
+        System.err.printf("%s does not match the given pattern %s.\n", lines[1], FAILURE_LINE_FORMAT);
       }
-      final Matcher onTopMatcher = ON_TOP_LINE_FORMAT.matcher(lines[1]);
+      final Matcher onTopMatcher = ON_TOP_LINE_FORMAT.matcher(lines[2]);
       if (!onTopMatcher.find()) {
-        System.err.printf("%s does not match the given pattern %s.\n", lines[1], ON_TOP_LINE_FORMAT);
+        System.err.printf("%s does not match the given pattern %s.\n", lines[2], ON_TOP_LINE_FORMAT);
       }
 
       // Updates the counters.
