@@ -52,7 +52,7 @@ public class Main {
     default:
       System.err.println("Invalid command.");
     }
-    System.out.println("Program finished at " + ZonedDateTime.now() + ".\n");
+    System.out.println("\nProgram finished at " + ZonedDateTime.now() + ".\n");
   }
 
   /**

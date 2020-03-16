@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 public class StatsChecker {
   private static final String STATS_PREFIX = "stats";
-  private static final Pattern ON_TOP_LINE_FORMAT = Pattern.compile(
-      "Out of (\\d+) queries, there are (\\d+) with compensation operators, and (\\d+) with compensation operators on top.");
+  private static final Pattern ON_TOP_LINE_FORMAT = Pattern.compile("Out of (?<total>\\d+) queries, "
+      + "there are (?<comp>\\d+) with compensation operators, and (?<top>\\d+) with compensation operators on top.");
   private static final Pattern FAILURE_LINE_FORMAT = Pattern.compile(
-      "Out of (\\d+) queries, there are (\\d+) failures.");
+      "Out of (?<total>\\d+) queries, there are (?<failure>\\d+) failures.");
 
   public void run(final String folder) throws Exception {
     // Gets all files.
@@ -35,19 +35,25 @@ public class StatsChecker {
       // Extracts the content.
       final String[] lines = getLastLines(file, 2);
       final Matcher failureMatcher = FAILURE_LINE_FORMAT.matcher(lines[0]);
+      if (!failureMatcher.find()) {
+        System.err.printf("%s does not match the given pattern %s.\n", lines[0], FAILURE_LINE_FORMAT);
+      }
       final Matcher onTopMatcher = ON_TOP_LINE_FORMAT.matcher(lines[1]);
+      if (!onTopMatcher.find()) {
+        System.err.printf("%s does not match the given pattern %s.\n", lines[1], ON_TOP_LINE_FORMAT);
+      }
 
       // Updates the counters.
-      onTopTotal += Integer.parseInt(onTopMatcher.group(0));
-      onTopCompensation += Integer.parseInt(onTopMatcher.group(1));
-      onTopOnTop += Integer.parseInt(onTopMatcher.group(2));
-      failureTotal += Integer.parseInt(failureMatcher.group(0));
-      failureFail += Integer.parseInt(failureMatcher.group(1));
+      onTopTotal += Integer.parseInt(onTopMatcher.group("total"));
+      onTopCompensation += Integer.parseInt(onTopMatcher.group("comp"));
+      onTopOnTop += Integer.parseInt(onTopMatcher.group("top"));
+      failureTotal += Integer.parseInt(failureMatcher.group("total"));
+      failureFail += Integer.parseInt(failureMatcher.group("failure"));
     }
 
     // Prints out the result.
     System.out.printf("Out of %d queries, there are %d with compensation operators, "
-        + "and %d with compensation operators on top.\n", onTopOnTop, onTopCompensation, onTopOnTop);
+        + "and %d with compensation operators on top.\n", onTopTotal, onTopCompensation, onTopOnTop);
     System.out.printf("Out of %d queries, there are %d failures.\n", failureTotal, failureFail);
   }
 
