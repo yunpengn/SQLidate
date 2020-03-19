@@ -31,6 +31,9 @@ generateBig() {
   psql random -f d.sql
   psql random -f e.sql
   psql random -f f.sql
+
+  cd ../
+  psql random -f create_view.sql
 }
 
 if [[ "$1" == "load" ]]; then

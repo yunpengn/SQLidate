@@ -1,0 +1,29 @@
+CREATE VIEW a1 AS
+    SELECT *
+    FROM a
+    WHERE "aID" < 1000;
+
+CREATE VIEW b1 AS
+    SELECT *
+    FROM b
+    WHERE "bID" < 1000;
+
+CREATE VIEW c1 AS
+    SELECT *
+    FROM c
+    WHERE "cID" < 10000;
+
+CREATE VIEW d1 AS
+    SELECT *
+    FROM d
+    WHERE "dID" < 10000;
+
+CREATE VIEW e1 AS
+    SELECT *
+    FROM e
+    WHERE "eID" < 100000;
+
+CREATE VIEW f1 AS
+    SELECT *
+    FROM f
+    WHERE "fID" < 100000;
